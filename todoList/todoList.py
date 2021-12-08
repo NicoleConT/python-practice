@@ -1,7 +1,12 @@
 import re
+import time
+from os.path import exists
 
-print('Hello TodoList Program~')
-name = input("请输入用户名：").strip()
+program_start_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+with open('start.log', 'a') as log_file:
+    log_file.write(f'programs started at {program_start_time}\n')
+    log_file.flush()
+    log_file.close()
 
 
 # 解析日期 或者 时间
@@ -18,22 +23,21 @@ def analyse(str_input: str, mode: str):
 
 
 def read_file(filename: str):
-    try:
-        file = open(filename + '.sav', 'r')
-        file_content = file.read()
-        todo_lines = file_content.splitlines()
-        saved_todos = []
-        for todo_in_line in todo_lines:
-            # 对读取到的每一行进行解析，获取日期、时间、内容
-            specified_todo = {
-                'date': analyse(todo_in_line, 'date'),
-                'time': analyse(todo_in_line, 'time'),
-                'detail': todo_in_line
-            }
-            saved_todos.append(specified_todo)
-        return saved_todos
-    except IOError:
-        return []
+    if exists(filename + '.sav'):
+        with open(filename + '.sav', 'r') as file:
+            file_content = file.read()
+            todo_lines = file_content.splitlines()
+            saved_todos = []
+            for todo_in_line in todo_lines:
+                # 对读取到的每一行进行解析，获取日期、时间、内容
+                specified_todo = {
+                    'date': analyse(todo_in_line, 'date'),
+                    'time': analyse(todo_in_line, 'time'),
+                    'detail': todo_in_line
+                }
+                saved_todos.append(specified_todo)
+            return saved_todos
+    return None
 
 
 def handle_user_options():
@@ -48,6 +52,9 @@ def handle_user_input(user_input: str):
         date = analyse(user_input, 'date')
 
 
+print('Hello TodoList Program~')
+name = input("请输入用户名：").strip()
+saved_todos = read_file(name)
 
 try:
     f = open(name + '.sav', 'r')
