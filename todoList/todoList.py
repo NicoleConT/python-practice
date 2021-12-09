@@ -1,5 +1,6 @@
 import re
 import time
+import json
 from os.path import exists
 
 program_start_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
@@ -23,8 +24,8 @@ def analyse(str_input: str, mode: str):
 
 
 def read_file(filename: str):
-    if exists(filename + '.sav'):
-        with open(filename + '.sav', 'r') as file:
+    if exists(filename):
+        with open(filename, 'r') as file:
             file_content = file.read()
             todo_lines = file_content.splitlines()
             saved_todos = []
@@ -53,14 +54,24 @@ def handle_user_input(user_input: str):
 
 
 print('Hello TodoList Program~')
-name = input("请输入用户名：").strip()
-saved_todos = read_file(name)
+username = input("请输入用户名：").strip()
+save_file_name = ''
+
+with open('list.conf', 'a+') as user_list:
+    for line in user_list.readlines():
+        user_data = json.loads(line)
+        if user_data['username'] == username:
+            save_file_name = user_data['filename']
+            break
+    if save_file_name == '':
+        save_file_name = username + '.sav'
+saved_todos = read_file(username)
 
 try:
-    f = open(name + '.sav', 'r')
+    f = open(save_file_name + '.sav', 'r')
 
-    fileContent = f.read()
-    todos = fileContent.splitlines()
+    file_content = f.read()
+    todos = file_content.splitlines()
     print(todos)
     while 1:
         i = input("请输入待办事项：").strip()
@@ -76,6 +87,10 @@ try:
                     print(todo)
             elif isinstance(op, int):
                 # 输入数字，则打印待完成事项的第几项，如果事项数不够，提示错误（修改为异常处理模式）
+                if op >= len(todos):
+                    print('Error, index should be lower than ' + len(todos))
+                else:
+                    print(todo[op])
                 pass
             elif op == 'SEARCH':
                 # 输入SEARCH，则等待用户输入一个正则表达式，可以根据输入的正则表达式打印出所有匹配的待办事项
