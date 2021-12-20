@@ -73,7 +73,7 @@ try:
     file_content = f.read()
     todos = file_content.splitlines()
     print(todos)
-    while 1:
+    while True:
         i = input("请输入待办事项：").strip()
         # eg:
         # 2021-06-06 20:00 看书
