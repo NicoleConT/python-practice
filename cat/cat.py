@@ -1,19 +1,31 @@
 from random import randint
 import threading
-from time import sleep, ctime
 
-# t = threading.Timer(5, get_user_input)
 
-class Cat:
+global hour
+
+action_dict = {
+    'play': '我在玩耍',
+    'walk': '我在散步',
+    'feed': '我在吃饭',
+    'seedoctor': '我在看医生',
+    'letalone': '我醒着但很无聊',
+    'sleep': '我在睡觉'
+}
+
+
+class Cat(object):
     hunger = 0
     happiness = 0
     health = 0
     current_action = 0
 
-    def __init__(self):
-        self.hunger = randint(0, 100)
-        self.happiness = randint(0, 100)
-        self.health = randint(0, 100)
+    def __init__(self, status=None):
+        if not status:
+            self.hunger = randint(0, 100)
+            self.happiness = randint(0, 100)
+            self.health = randint(0, 100)
+            self.current_action = 'sleep'
         print('我的名字叫Tommy，一只可爱的猫咪...')
         print('你可以和我一起散布，玩耍，你也需要给我好吃的东西，带我去看病，也可以让我发呆...')
         print('Commands:')
@@ -91,3 +103,29 @@ class Cat:
         print('记得来找我！Bye....')
         # save 保存状态到文件
         pass
+
+
+def handle_opt(option, cat):
+    if option == 'walk':
+        cat.current_action = 'walk'
+        cat.walk()
+    elif option == 'play':
+        cat.current_action = 'play'
+        cat.play()
+    elif option == 'feed':
+        cat.current_action = 'feed'
+        cat.feed()
+    elif option == 'seedoctor':
+        cat.current_action = 'seedoctor'
+        cat.see_doctor()
+    elif option == 'letalone':
+        cat.current_action = 'letalone'
+        cat.let_alone()
+    elif option == 'status':
+        cat.show_status()
+    elif option == 'bye':
+        cat.bye()
+
+
+def main():
+    pass
